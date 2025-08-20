@@ -311,9 +311,57 @@ api/
 
 ## Testing
 
-Run the test suite:
+### Backend Tests
+
+Run the complete test suite:
 ```bash
 npm test
+```
+
+Run tests in watch mode:
+```bash
+npm run test:watch
+```
+
+Run tests with coverage:
+```bash
+npm run test:coverage
+```
+
+### Performance Testing
+
+Run k6 performance tests:
+```bash
+./run-performance-test.sh
+```
+
+**Requirements:**
+- Install k6: `brew install k6` (macOS) or follow [k6 installation guide](https://k6.io/docs/getting-started/installation/)
+- Backend must be running (`npm run dev`)
+
+**Performance Criteria:**
+- 95% of requests must complete below 150ms
+- Less than 1% of requests can fail
+
+### API Testing
+
+Import the Postman collection: `UpDrill-API.postman_collection.json`
+
+**Test Coverage:**
+- ✅ Health check endpoint
+- ✅ Authentication flow (OAuth config, Google OAuth)
+- ✅ Drills CRUD operations
+- ✅ Attempts submission and retrieval
+- ✅ Error handling and validation
+- ✅ Rate limiting and security
+
+### Test Structure
+
+```
+api/k6/
+├── health.test.js         # Health check tests
+├── auth.test.js           # Authentication tests
+└── drills-cache.test.js   # Drills caching performance tests
 ```
 
 ## Deployment

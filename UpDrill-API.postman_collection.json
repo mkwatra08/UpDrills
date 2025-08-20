@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "UpDrill API",
+    "description": "Complete API collection for UpDrill interview drills application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        }
+      }
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Get OAuth Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/config",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "config"]
+            }
+          }
+        },
+        {
+          "name": "Initiate Google OAuth",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "me"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Drills",
+      "item": [
+        {
+          "name": "Get All Drills",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/drills",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "drills"]
+            }
+          }
+        },
+        {
+          "name": "Get Drill by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/drills/{{drillId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "drills", "{{drillId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attempts",
+      "item": [
+        {
+          "name": "Submit Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"drillId\": \"{{drillId}}\",\n  \"answers\": [\n    {\n      \"qid\": \"q1\",\n      \"text\": \"Sample answer for question 1\"\n    },\n    {\n      \"qid\": \"q2\",\n      \"text\": \"Sample answer for question 2\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts"]
+            }
+          }
+        },
+        {
+          "name": "Get User Attempts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts?limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "drillId",
+      "value": "507f1f77bcf86cd799439011",
+      "type": "string"
+    }
+  ]
+} 

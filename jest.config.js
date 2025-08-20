@@ -1,13 +1,13 @@
 module.exports = {
   testEnvironment: 'node',
-  testMatch: ['**/test/**/*.test.js'],
+  testMatch: ['**/k6/**/*.test.js'],
   collectCoverageFrom: [
     'api/**/*.js',
-    '!api/test/**',
+    '!api/k6/**',
     '!api/scripts/**',
     '!api/server.js'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/api/test/setup.js']
+  setupFilesAfterEnv: ['<rootDir>/api/k6/setup.js']
 }; 

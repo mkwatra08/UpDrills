@@ -1,0 +1,55 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: updrill-api
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/upivot
+      - JWT_SECRET=change_me
+      - SESSION_COOKIE_NAME=upivot_sid
+      - RATE_LIMIT_WINDOW_MS=300000
+      - RATE_LIMIT_MAX=100
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URL=http://localhost:4000/auth/google/callback
+    volumes:
+      - ./api:/app/api
+      - /app/node_modules
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7.0
+    container_name: updrill-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=upivot
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express:1.0.0
+    container_name: updrill-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=
+      - ME_CONFIG_BASICAUTH_USERNAME=
+      - ME_CONFIG_BASICAUTH_PASSWORD=
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+volumes:
+  mongo_data: 

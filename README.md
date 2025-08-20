@@ -28,42 +28,22 @@ A Node.js + Express + MongoDB backend for the UpDrill interview drills applicati
 - MongoDB (local or cloud instance)
 - Google OAuth 2.0 credentials
 
-## Quick Start with Docker
+## Quick Start
 
-The fastest way to get started is using Docker Compose:
+### Docker Compose (Recommended)
 
-1. **Clone the repository**
+The fastest way to get started:
+
+1. **Clone and setup**
    ```bash
    git clone <repository-url>
    cd UpDrill
+   cp .env.example .env
    ```
 
-2. **Set up environment variables**
-   ```bash
-   cp env.example .env
-   ```
-   
-   Edit `.env` with your configuration:
-   ```env
-   PORT=4000
-   MONGO_URI=mongodb://mongo:27017/upivot
-   JWT_SECRET=change_me
-   SESSION_COOKIE_NAME=upivot_sid
-   NODE_ENV=development
-   RATE_LIMIT_WINDOW_MS=300000
-   RATE_LIMIT_MAX=100
-   GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
-   GOOGLE_CLIENT_SECRET=yyy
-   GOOGLE_CALLBACK_URL=http://localhost:4000/auth/google/callback
-   ```
+2. **Configure environment variables** (see [Environment Variables](#environment-variables) section)
 
-3. **Set up Google OAuth**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select existing one
-   - Enable Google+ API
-   - Create OAuth 2.0 credentials
-   - Add authorized redirect URIs: `http://localhost:4000/auth/google/callback`
-   - Copy Client ID and Client Secret to your `.env` file
+3. **Set up Google OAuth** (see [OAuth Setup](#oauth-setup) section)
 
 4. **Start all services**
    ```bash
@@ -75,14 +55,72 @@ The fastest way to get started is using Docker Compose:
 5. **Seed the database**
    ```bash
    make seed
-   # or
-   docker-compose exec api npm run seed
    ```
 
-6. **Access the services**
-   - API: http://localhost:4000
-   - MongoDB Express UI: http://localhost:8081
-   - Health Check: http://localhost:4000/api/health
+6. **Verify everything is working**
+   ```bash
+   curl http://localhost:4000/api/health
+   # Should return: {"ok":true}
+   ```
+
+### Manual Setup
+
+If you prefer to run without Docker:
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Start MongoDB**
+   ```bash
+   # Local MongoDB
+   mongod
+   
+   # Or use MongoDB Atlas (cloud)
+   ```
+
+3. **Configure environment variables**
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Seed the database**
+   ```bash
+   npm run seed
+   ```
+
+## OAuth Setup
+
+### Google OAuth Configuration
+
+1. **Create Google Cloud Project**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing one
+   - Enable the Google+ API
+
+2. **Create OAuth 2.0 Credentials**
+   - Go to "APIs & Services" > "Credentials"
+   - Click "Create Credentials" > "OAuth 2.0 Client IDs"
+   - Choose "Web application"
+   - Add authorized redirect URIs:
+     - `http://localhost:4000/auth/google/callback` (for development)
+     - `https://yourdomain.com/auth/google/callback` (for production)
+
+3. **Configure Environment Variables**
+   ```env
+   GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret
+   GOOGLE_CALLBACK_URL=http://localhost:4000/auth/google/callback
+   ```
+
+4. **Test OAuth Flow**
+   ```bash
+   curl http://localhost:4000/auth/config
+   # Should return: {"oauthConfigured":true,"message":"OAuth is properly configured"}
+   ```
 
 ## Manual Installation
 
@@ -261,6 +299,15 @@ Consistent error response format:
 
 ## Environment Variables
 
+### Required Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID | `123456789.apps.googleusercontent.com` |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | `GOCSPX-xxxxxxxxxxxxxxxxxxxx` |
+
+### Optional Variables
+
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `NODE_ENV` | Environment mode | `development` |
@@ -268,12 +315,49 @@ Consistent error response format:
 | `MONGO_URI` | MongoDB connection string | `mongodb://mongo:27017/upivot` |
 | `JWT_SECRET` | JWT/Session encryption secret | `change_me` |
 | `SESSION_COOKIE_NAME` | Session cookie name | `upivot_sid` |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID | Required |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | Required |
 | `GOOGLE_CALLBACK_URL` | Google OAuth callback URL | `http://localhost:4000/auth/google/callback` |
 | `RATE_LIMIT_WINDOW_MS` | Rate limit window | `300000` (5 min) |
 | `RATE_LIMIT_MAX` | Rate limit max requests | `100` |
 | `CACHE_TTL_MS` | Cache TTL in milliseconds | `60000` (60 sec) |
+| `ALLOWED_ORIGINS` | CORS allowed origins | `http://localhost:5173` |
+| `FRONTEND_URL` | Frontend URL for OAuth redirect | `http://localhost:5173` |
+| `LOG_LEVEL` | Winston log level | `info` |
+
+### Example .env file
+
+```env
+# Required OAuth Configuration
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+
+# Server Configuration
+PORT=4000
+NODE_ENV=development
+
+# Database
+MONGO_URI=mongodb://mongo:27017/upivot
+
+# Security
+JWT_SECRET=your-super-secret-jwt-key
+SESSION_COOKIE_NAME=upivot_sid
+
+# OAuth Callback
+GOOGLE_CALLBACK_URL=http://localhost:4000/auth/google/callback
+
+# CORS
+ALLOWED_ORIGINS=http://localhost:5173
+FRONTEND_URL=http://localhost:5173
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=300000
+RATE_LIMIT_MAX=100
+
+# Caching
+CACHE_TTL_MS=60000
+
+# Logging
+LOG_LEVEL=info
+```
 
 ## Development
 
@@ -311,29 +395,42 @@ api/
 
 ## Testing
 
+### Test Commands
+
+```bash
+# Run all backend tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run performance tests (requires k6)
+./run-performance-test.sh
+
+# Run specific test file
+npm test -- api/k6/health.test.js
+```
+
 ### Backend Tests
 
-Run the complete test suite:
-```bash
-npm test
-```
+**Test Coverage:**
+- ✅ Health check endpoint
+- ✅ Authentication flow (OAuth config, user status, logout)
+- ✅ Drills caching and filtering
+- ✅ Error handling and validation
 
-Run tests in watch mode:
-```bash
-npm run test:watch
+**Test Structure:**
 ```
-
-Run tests with coverage:
-```bash
-npm run test:coverage
+api/k6/
+├── health.test.js         # Health check tests
+├── auth.test.js           # Authentication tests
+└── drills-cache.test.js   # Drills caching performance tests
 ```
 
 ### Performance Testing
-
-Run k6 performance tests:
-```bash
-./run-performance-test.sh
-```
 
 **Requirements:**
 - Install k6: `brew install k6` (macOS) or follow [k6 installation guide](https://k6.io/docs/getting-started/installation/)
@@ -347,22 +444,13 @@ Run k6 performance tests:
 
 Import the Postman collection: `UpDrill-API.postman_collection.json`
 
-**Test Coverage:**
-- ✅ Health check endpoint
-- ✅ Authentication flow (OAuth config, Google OAuth)
-- ✅ Drills CRUD operations
-- ✅ Attempts submission and retrieval
-- ✅ Error handling and validation
-- ✅ Rate limiting and security
-
-### Test Structure
-
-```
-api/k6/
-├── health.test.js         # Health check tests
-├── auth.test.js           # Authentication tests
-└── drills-cache.test.js   # Drills caching performance tests
-```
+**Manual Testing:**
+- Health check endpoint
+- Authentication flow (OAuth config, Google OAuth)
+- Drills CRUD operations
+- Attempts submission and retrieval
+- Error handling and validation
+- Rate limiting and security
 
 ## Deployment
 
@@ -372,6 +460,79 @@ api/k6/
 4. Configure CORS for production domains
 5. Set up proper logging
 6. Use PM2 or similar process manager
+
+## Known Limitations & Next Steps
+
+### Current Limitations
+
+1. **Authentication**
+   - Only Google OAuth is supported (no email/password)
+   - No password reset functionality
+   - No account deletion
+
+2. **Drills Management**
+   - No admin interface for creating/editing drills
+   - Limited drill types (only text-based questions)
+   - No image or file upload support
+
+3. **Scoring System**
+   - Basic keyword matching for scoring
+   - No advanced NLP or AI-powered evaluation
+   - No partial credit system
+
+4. **Performance**
+   - In-memory caching (not Redis)
+   - No database query optimization for large datasets
+   - No CDN for static assets
+
+5. **Security**
+   - No rate limiting per user (only per IP)
+   - No audit logging for sensitive operations
+   - No input sanitization for rich text
+
+### What You'd Do Next
+
+1. **Enhanced Authentication**
+   - Add email/password authentication
+   - Implement password reset flow
+   - Add multi-factor authentication
+   - User profile management
+
+2. **Advanced Drills**
+   - Admin dashboard for drill management
+   - Support for multiple question types (MCQ, coding, etc.)
+   - File upload for images/documents
+   - Drill templates and categories
+
+3. **Improved Scoring**
+   - AI-powered answer evaluation
+   - Partial credit system
+   - Detailed feedback for answers
+   - Performance analytics
+
+4. **Performance & Scalability**
+   - Redis for caching and sessions
+   - Database query optimization
+   - CDN integration
+   - Load balancing
+
+5. **Security Enhancements**
+   - Per-user rate limiting
+   - Audit logging
+   - Input sanitization
+   - Security headers optimization
+
+6. **Monitoring & Analytics**
+   - Application performance monitoring
+   - User behavior analytics
+   - Error tracking and alerting
+   - Usage statistics
+
+7. **Frontend Improvements**
+   - Progressive Web App (PWA)
+   - Offline support
+   - Real-time notifications
+   - Mobile app
 
 ## Contributing
 

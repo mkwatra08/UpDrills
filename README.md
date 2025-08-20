@@ -1,9 +1,29 @@
-# UpDrill Backend API
+# UpDrill - Interview Drills Application
 
-A Node.js + Express + MongoDB backend for the UpDrill interview drills application.
+A complete full-stack interview drills application built with Node.js, Express, MongoDB, and React.
+
+## 🚀 Live Demo
+
+Access the application at: [http://localhost:5173](http://localhost:5173) (after starting the frontend)
+
+## 📋 Overview
+
+UpDrill is a comprehensive interview preparation platform that allows users to:
+- **Practice Drills**: Take interview drills with various difficulty levels
+- **Track Progress**: View attempt history and performance analytics
+- **Secure Authentication**: Sign in with Google OAuth
+- **Real-time Scoring**: Get immediate feedback on your answers
+
+## 🏗️ Architecture
+
+**Backend**: Node.js + Express + MongoDB
+**Frontend**: React + Vite + Tailwind CSS
+**Authentication**: Google OAuth 2.0
+**Testing**: Jest + Supertest + k6 Performance Testing
 
 ## Features
 
+### Backend Features
 - **Authentication**: Google OAuth with secure session management
 - **Drills Management**: CRUD operations for interview drills with caching
 - **Attempt Tracking**: User attempt submission with automatic scoring
@@ -11,8 +31,17 @@ A Node.js + Express + MongoDB backend for the UpDrill interview drills applicati
 - **Performance**: MongoDB connection pooling and in-memory caching
 - **Logging**: Comprehensive request and error logging with Winston
 
+### Frontend Features
+- **Modern UI**: Beautiful, responsive design with Tailwind CSS
+- **User Dashboard**: View available drills and start practice sessions
+- **Drill Interface**: Interactive question answering with real-time feedback
+- **Progress Tracking**: View attempt history and performance statistics
+- **Authentication Flow**: Seamless Google OAuth integration
+- **Mobile Responsive**: Works perfectly on desktop and mobile devices
+
 ## Tech Stack
 
+### Backend
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js
 - **Database**: MongoDB with Mongoose ODM
@@ -22,6 +51,20 @@ A Node.js + Express + MongoDB backend for the UpDrill interview drills applicati
 - **Logging**: Winston
 - **Caching**: In-memory cache for drills
 
+### Frontend
+- **Framework**: React 18 with Vite
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **HTTP Client**: Axios
+- **Build Tool**: Vite
+- **Development**: Hot module replacement
+
+### Testing & Tools
+- **Backend Testing**: Jest + Supertest
+- **Performance Testing**: k6
+- **API Testing**: Postman Collection
+- **Containerization**: Docker + Docker Compose
+
 ## Prerequisites
 
 - Node.js 18 or higher
@@ -30,9 +73,7 @@ A Node.js + Express + MongoDB backend for the UpDrill interview drills applicati
 
 ## Quick Start
 
-### Docker Compose (Recommended)
-
-The fastest way to get started:
+### Complete Setup (Backend + Frontend)
 
 1. **Clone and setup**
    ```bash
@@ -45,23 +86,38 @@ The fastest way to get started:
 
 3. **Set up Google OAuth** (see [OAuth Setup](#oauth-setup) section)
 
-4. **Start all services**
+4. **Install dependencies**
    ```bash
+   # Backend dependencies
+   npm install
+   
+   # Frontend dependencies
+   cd web
+   npm install
+   cd ..
+   ```
+
+5. **Start the backend**
+   ```bash
+   # Option 1: Docker (recommended)
    make up
-   # or
-   docker-compose up -d
-   ```
-
-5. **Seed the database**
-   ```bash
    make seed
+   
+   # Option 2: Manual
+   npm run dev
+   npm run seed
    ```
 
-6. **Verify everything is working**
+6. **Start the frontend**
    ```bash
-   curl http://localhost:4000/api/health
-   # Should return: {"ok":true}
+   cd web
+   npm run dev
    ```
+
+7. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:4000
+   - Health Check: http://localhost:4000/api/health
 
 ### Manual Setup
 
@@ -183,25 +239,37 @@ make mongo
 - **MongoDB**: Database on port 27017 with persisted volume
 - **Mongo Express**: Web UI for MongoDB on port 8081
 
-## API Endpoints
+## Application Features
 
-### Health Check
+### Frontend Application
+
+The React frontend provides a complete user interface:
+
+- **Landing Page**: Welcome screen with Google OAuth sign-in
+- **Dashboard**: Browse available drills by difficulty and tags
+- **Drill Interface**: Interactive question answering with real-time feedback
+- **History**: View past attempts with scores and timestamps
+- **Responsive Design**: Works seamlessly on desktop and mobile
+
+### Backend API
+
+#### Health Check
 - `GET /api/health` - Returns `{ok: true}`
 
-### Authentication
+#### Authentication
 - `GET /auth/google` - Initiate Google OAuth
 - `GET /auth/google/callback` - Google OAuth callback
 - `GET /auth/logout` - Logout user
 - `GET /auth/status` - Check authentication status
 
-### User Management
+#### User Management
 - `GET /api/me` - Get current user profile (requires auth)
 
-### Drills (Public)
+#### Drills (Public)
 - `GET /api/drills` - Get all drills with filtering and pagination
 - `GET /api/drills/:id` - Get specific drill
 
-### Attempts (Requires Auth)
+#### Attempts (Requires Auth)
 - `POST /api/attempts` - Submit attempt with scoring
 - `GET /api/attempts` - Get user attempts (limit=5 by default)
 - `GET /api/attempts/:id` - Get specific attempt
@@ -363,27 +431,38 @@ LOG_LEVEL=info
 
 ### Project Structure
 ```
-api/
-├── config/
-│   └── passport.js          # Passport configuration
-├── middleware/
-│   ├── auth.js              # Authentication middleware
-│   ├── errorHandler.js      # Error handling
-│   ├── logger.js            # Request logging
-│   └── validation.js        # Input validation
-├── models/
-│   ├── User.js              # User model
-│   ├── Drill.js             # Drill model
-│   └── Attempt.js           # Attempt model
-├── routes/
-│   ├── auth.js              # Authentication routes
-│   ├── drills.js            # Drill routes
-│   ├── attempts.js          # Attempt routes
-│   ├── health.js            # Health check
-│   └── user.js              # User routes
-├── scripts/
-│   └── seed.js              # Database seeding
-└── server.js                # Main server file
+UpDrill/
+├── api/                     # Backend API
+│   ├── config/
+│   │   └── passport.js      # Passport configuration
+│   ├── middleware/
+│   │   ├── auth.js          # Authentication middleware
+│   │   ├── errorHandler.js  # Error handling
+│   │   ├── logger.js        # Request logging
+│   │   └── validation.js    # Input validation
+│   ├── models/
+│   │   ├── User.js          # User model
+│   │   ├── Drill.js         # Drill model
+│   │   └── Attempt.js       # Attempt model
+│   ├── routes/
+│   │   ├── auth.js          # Authentication routes
+│   │   ├── drills.js        # Drill routes
+│   │   ├── attempts.js      # Attempt routes
+│   │   ├── health.js        # Health check
+│   │   └── user.js          # User routes
+│   ├── scripts/
+│   │   └── seed.js          # Database seeding
+│   └── server.js            # Main server file
+├── web/                     # Frontend React App
+│   ├── src/
+│   │   ├── App.jsx          # Main application component
+│   │   ├── components/      # React components
+│   │   └── styles/          # CSS styles
+│   ├── public/              # Static assets
+│   └── package.json         # Frontend dependencies
+├── docker-compose.yml       # Docker services
+├── package.json             # Backend dependencies
+└── README.md               # Project documentation
 ```
 
 ### Adding New Features

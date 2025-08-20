@@ -4,7 +4,7 @@ A complete full-stack interview drills application built with Node.js, Express, 
 
 ## 🚀 Live Demo
 
-Video Link: [https://youtu.be/nGVqaVLal-A](Demonstration)
+Video Link: [https://youtu.be/nGVqaVLal-A](https://youtu.be/nGVqaVLal-A)
 
 ## 📋 Overview
 

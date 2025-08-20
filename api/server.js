@@ -99,6 +99,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
@@ -142,12 +143,15 @@ const connectDB = async () => {
 connectDB();
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   logger.info('SIGTERM received, shutting down gracefully');
-  mongoose.connection.close(() => {
+  try {
+    await mongoose.connection.close();
     logger.info('MongoDB connection closed');
-    process.exit(0);
-  });
+  } catch (error) {
+    logger.error('Error closing MongoDB connection:', error);
+  }
+  process.exit(0);
 });
 
 const PORT = process.env.PORT || 4000;

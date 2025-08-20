@@ -38,8 +38,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes
-userSchema.index({ email: 1 }, { unique: true });
+// Indexes - email is already unique in schema definition
 
 // Virtual for getting the primary provider
 userSchema.virtual('primaryProvider').get(function() {

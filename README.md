@@ -4,7 +4,7 @@ A complete full-stack interview drills application built with Node.js, Express, 
 
 ## 🚀 Live Demo
 
-Access the application at: [http://localhost:5173](http://localhost:5173) (after starting the frontend)
+Video Link: [https://youtu.be/nGVqaVLal-A](Demonstration)
 
 ## 📋 Overview
 

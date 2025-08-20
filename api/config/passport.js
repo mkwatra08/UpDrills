@@ -18,7 +18,10 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Google OAuth Strategy
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+if (process.env.GOOGLE_CLIENT_ID && 
+    process.env.GOOGLE_CLIENT_SECRET && 
+    process.env.GOOGLE_CLIENT_ID !== 'placeholder.apps.googleusercontent.com' &&
+    process.env.GOOGLE_CLIENT_SECRET !== 'placeholder_secret') {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
